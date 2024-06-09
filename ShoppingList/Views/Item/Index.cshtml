@@ -1,0 +1,64 @@
+﻿@model IEnumerable<Item>
+@{
+    ViewData["Title"] = "Item list";
+}
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <table class="table table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    
+                    <th style="padding: 0.9rem;">@Html.DisplayNameFor(model => model.Name)</th>
+                    <th style="padding: 0.9rem;">@Html.DisplayNameFor(model => model.Quantity)</th>
+                    <th style="padding: 0.9rem;">@Html.DisplayNameFor(model => model.Bought)</th>
+                    <th style="padding: 0.9rem;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+        <tr>
+            <td colspan="4" style="text-align: center; padding: 0.9rem;">No item to show</td>
+        </tr>
+                }
+                @foreach (var item in Model)
+                {
+                        <tr>
+                            <td style="padding: 0.9rem;">@Html.DisplayFor(modelItem => item.Name)</td>
+                            <td style="padding: 0.9rem;">@Html.DisplayFor(modelItem => item.Quantity)</td>
+                            <td style="padding: 0.9rem;">
+                                     <form asp-controller="Item" asp-action="MarkPurchased" method="post">
+                            <input type="hidden" name="id" value="@item.Itemid"/>
+                            <input type="checkbox" name="Bought" value="true" @(item.Bought ? "checked" : "") onchange="this.form.submit()"/>
+                        </form>
+                            </td>
+                            <td style="text-align: right; padding: 0.1rem;">
+                                    <a class="btn btn-primary" asp-action="Edit" asp-route-id="@item.Itemid">Edit</a> |
+                                <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Itemid">Delete</a>
+                            </td>
+                        </tr>
+                }
+            
+                <div style="text-align: right; padding: 0.1rem;" colspan="4">
+                    
+                        <a asp-controller="Item" asp-action="Create" class="btn btn-success">
+                            <i class="bi bi-plus-circle"></i> Add New
+                        </a>
+
+                    <a asp-controller="Item" asp-action="Logout">Logout</a>
+
+                    
+                </div>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function updateBought(Itemid, checked) {
+        $.post("/Item/UpdateBought", { id: Itemid, Bought: checked }, function (result) {
+            console.log(result);
+        });
+    }
+</script>
